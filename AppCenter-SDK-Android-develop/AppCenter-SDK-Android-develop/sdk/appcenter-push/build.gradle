@@ -1,0 +1,9 @@
+project.description = 'This package contains functionalities to receive push notifications for your application.'
+evaluationDependsOn(':sdk')
+
+dependencies {
+    api project(':sdk:appcenter')
+
+    api "com.google.firebase:firebase-core:16.0.1"
+    api "com.google.firebase:firebase-messaging:17.0.0"
+}

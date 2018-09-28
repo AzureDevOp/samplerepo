@@ -1,0 +1,13 @@
+apply plugin: 'com.android.library'
+
+android {
+
+    //noinspection GroovyMissingReturnStatement
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+}
+
+dependencies {
+    implementation 'junit:junit:4.12'
+}

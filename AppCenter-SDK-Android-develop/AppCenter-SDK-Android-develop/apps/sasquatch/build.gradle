@@ -1,0 +1,88 @@
+//
+// :apps:sasquatch
+//
+
+evaluationDependsOn(':apps')
+
+android {
+
+    flavorDimensions "dependency", "pushLibrary"
+
+    defaultConfig {
+        externalNativeBuild {
+            ndkBuild {
+                arguments "NDK_APPLICATION_MK=Application.mk", "V=1"
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            }
+        }
+    }
+
+    productFlavors {
+        projectDependency {
+            dimension "dependency"
+            applicationIdSuffix ".project"
+        }
+        jcenterDependency {
+            dimension "dependency"
+            applicationIdSuffix ".jcenter"
+        }
+        vanilla {
+            dimension "pushLibrary"
+        }
+        firebase {
+            dimension "pushLibrary"
+        }
+    }
+
+    buildTypes {
+        releaseProguard {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            matchingFallbacks = ['release']
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path "Android.mk"
+        }
+    }
+}
+
+repositories {
+    maven {
+        url "https://dl.bintray.com/vsappcenter/appcenter-snapshot"
+    }
+}
+
+dependencies {
+    implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+
+    projectDependencyImplementation project(':sdk:appcenter-analytics')
+    projectDependencyImplementation project(':sdk:appcenter-crashes')
+    projectDependencyImplementation project(':sdk:appcenter-distribute')
+    projectDependencyImplementation project(':sdk:appcenter-push')
+    projectDependencyImplementation project(':sdk:appcenter-rum')
+
+    def appCenterSdkVersion = "1.8.0"
+    //noinspection GradleDependency
+    jcenterDependencyImplementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    //noinspection GradleDependency
+    jcenterDependencyImplementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+    //noinspection GradleDependency
+    jcenterDependencyImplementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
+    //noinspection GradleDependency
+    jcenterDependencyImplementation "com.microsoft.appcenter:appcenter-push:${appCenterSdkVersion}"
+
+    /* Force usage this version of support annotations to avoid conflict. */
+    androidTestImplementation "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.1'
+}
+
+// We are interested in excluding the plugin only for the vanilla sasquatch build variant.
+def taskRequests = getGradle().getStartParameter().getTaskRequests().toString()
+if (!taskRequests.contains("sasquatch") || taskRequests.contains("Firebase")) {
+    apply plugin: 'com.google.gms.google-services'
+}
