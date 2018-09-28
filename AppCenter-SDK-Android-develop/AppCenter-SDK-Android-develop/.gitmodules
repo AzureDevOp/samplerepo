@@ -1,3 +1,0 @@
-[submodule "apps/sasquatch/src/main/cpp/google-breakpad"]
-	path = apps/sasquatch/src/main/cpp/google-breakpad
-	url = https://github.com/Microsoft/AppCenter-SDK-Android-Breakpad.git
